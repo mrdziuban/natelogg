@@ -100,13 +100,16 @@
         </div>
         <script>
             $(document).ready(function() {
+                var logSelection = storage.getItem('logSelection', {});
                 <% for(var i = 0; i < logs.length; i++) { %>
-                    <% if (logs[i][1] !== '') { %>
-                        <% logs[i][1].split("\n").forEach(function(logLine) { %>
-                            <% if (logLine.trim() === '') { return; } %>
-                            lineProcessor(<%- JSON.stringify(logLine.trim()) %>);
-                        <% }); %>
-                    <% } %>
+                    if ($('#logs input:checkbox[value="<%= logs[i][0] %>"]').prop('checked')) {
+                        <% if (logs[i][1] !== '') { %>
+                            <% logs[i][1].split("\n").forEach(function(logLine) { %>
+                                <% if (logLine.trim() === '') { return; } %>
+                                lineProcessor(<%- JSON.stringify(logLine.trim()) %>);
+                            <% }); %>
+                        <% } %>
+                    }
                 <% } %>
             });
         </script>
