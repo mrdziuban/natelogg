@@ -27,9 +27,14 @@ app.use(morgan('dev'));
 app.use('/static', express.static(__dirname + '/static'));
 
 var requestHandler = function(err, logs) {
+    var showFullLog;
     if (err) {
         return this.send('Can\'t read log directory ' + config.logDirectory);
     }
+    showFullLog = config.hasOwnProperty('showFullLog') ? config.showFullLog : false;
+    logs = logs.map(function(log) {
+        return [log, showFullLog ? fs.readFileSync(config.logDirectory + '/' + log, 'utf8') : ''];
+    });
     this.render('main', { logs: logs });
 };
 

@@ -20,8 +20,8 @@
                     <table id="logs">
                     <% for(var i=0; i<logs.length; i++) { %>
                         <tr>
-                            <td><input type="checkbox" value="<%= logs[i] %>" /></td>
-                            <td class="log-label"><%= logs[i] %></td>
+                            <td><input type="checkbox" value="<%= logs[i][0] %>" /></td>
+                            <td class="log-label"><%= logs[i][0] %></td>
                         </tr>
                     <% } %>
                     </table>
@@ -98,5 +98,17 @@
     conditions : []
 }</textarea>
         </div>
+        <script>
+            $(document).ready(function() {
+                <% for(var i = 0; i < logs.length; i++) { %>
+                    <% if (logs[i][1] !== '') { %>
+                        <% logs[i][1].split("\n").forEach(function(logLine) { %>
+                            <% if (logLine.trim() === '') { return; } %>
+                            lineProcessor(<%- JSON.stringify(logLine.trim()) %>);
+                        <% }); %>
+                    <% } %>
+                <% } %>
+            });
+        </script>
     </body>
 </html>
