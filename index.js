@@ -26,16 +26,19 @@ app.set('views', __dirname + '/views');
 app.use(morgan('dev'));
 app.use('/static', express.static(__dirname + '/static'));
 
-app.get('/', function (req, res) {
-    fs.readdir(config.logDirectory, function(err, logs) {
-        if(err) {
-           return res.send('Can\'t read log directory ' + config.logDirectory); 
-        }
+var requestHandler = function(err, logs) {
+    if (err) {
+        return this.send('Can\'t read log directory ' + config.logDirectory);
+    }
+    this.render('main', { logs: logs });
+};
 
-        res.render('main', {
-            logs: logs
-        });
-    });
+app.get('/', function (req, res) {
+    fs.readdir(config.logDirectory, requestHandler.bind(res));
+});
+
+app.get('/:logFile', function(req, res) {
+    requestHandler.call(res, null, [req.params.logFile]);
 });
 
 var server = app.listen(port, function () {
