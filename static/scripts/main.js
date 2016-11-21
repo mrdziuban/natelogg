@@ -16,20 +16,19 @@ $(document).ready(function() {
     $(window).on('beforeunload', function() {
         //save selected to logs to local storage
         storage.setItem('logSelection', getLogSelection());
-        return 'Stop logging and exit?';
     });
-    
+
     function getLogSelection() {
         var checkedLogs = {};
-        
+
         $('#logs input:checkbox').each(function(i, checkbox) {
             if (checkbox.checked) {
-                checkedLogs[checkbox.value] = true;                                
+                checkedLogs[checkbox.value] = true;
             }
         });
-        
+
         return checkedLogs;
-    }    
+    }
 
     $('#font-size').change(function() {
         storage.setItem('fontSize', this.value);
@@ -44,16 +43,16 @@ $(document).ready(function() {
 
     $('#logs input:checkbox, #logs .log-label').click(function() {
         var el         = $(this);
-        
+
         if (!el.is('input:checkbox')) {
             el = el.prev().find('input:checkbox');
             el.prop('checked', !el.prop('checked'));
         }
-        
+
         var checked    = el.prop('checked');
         var log        = el.attr('value');
-        
-        toggleLog(log, checked);               
+
+        toggleLog(log, checked);
     });
 
     $('#clear-history').click(function() {
@@ -114,7 +113,7 @@ $(document).ready(function() {
     if(storage.getItem('formatter')) {
         $('input[name=formatter][value=' + storage.getItem('formatter') + ']').prop('checked', true).change();
     }
-    
+
     applyPreviousLogSelection();
 });
 
@@ -135,7 +134,7 @@ function lineProcessor(data, isRecursive) {
             historyLength--;
         }
     }
-    
+
     if(scrollAtBottom) {
         if(!isRecursive) {
             processBuffer(el)
@@ -161,7 +160,7 @@ function processBuffer(el) {
     scrollBuffer.forEach(function(data) {
         lineProcessor(data, true);
     });
-    
+
     scrollBuffer = [];
 }
 
@@ -196,12 +195,12 @@ if(typeof(Storage) !== "undefined") {
 
 function applyPreviousLogSelection() {
     var logSelection = storage.getItem('logSelection', {});
-    
+
     Object.keys(logSelection).forEach(function(key) {
        $('#logs input:checkbox[value="' + key + '"]').prop('checked', true);
        toggleLog(key, true);
     });
-    
+
     storage.removeItem('logSelection');
 }
 
@@ -209,5 +208,5 @@ function toggleLog(log, checked) {
     socket.emit('toggleLog', {
         log     : log,
         enabled : checked
-    }); 
+    });
 }
